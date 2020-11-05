@@ -9,3 +9,5 @@ spring:
     name: sso-springboot
 
 
+jwt:
+  secret: raven666
