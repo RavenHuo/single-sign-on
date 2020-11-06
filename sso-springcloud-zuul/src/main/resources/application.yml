@@ -1,0 +1,13 @@
+server:
+  port: 8080
+  tomcat:
+    uri-encoding: UTF-8
+
+
+spring:
+  application:
+    name: sso-springcloud-zuul
+
+
+jwt:
+  secret: raven666
