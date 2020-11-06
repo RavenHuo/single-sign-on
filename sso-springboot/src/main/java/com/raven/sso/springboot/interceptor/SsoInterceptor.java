@@ -1,32 +1,28 @@
-package com.raven.sso.springboot.filter;
+package com.raven.sso.springboot.interceptor;
 
 import com.raven.sso.springboot.common.Constant;
 import com.raven.sso.springboot.common.UserInfoCache;
 import com.raven.sso.springboot.common.exception.SsoException;
 import com.raven.sso.springboot.common.utils.JwtUtil;
-import com.sun.org.apache.xpath.internal.operations.Or;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
  * @description:
  * @author: huorw
- * @create: 2020-11-04 10:19
+ * @create: 2020-11-06 20:34
  */
 @Component
 @Slf4j
-public class RequestFilter implements Filter {
+public class SsoInterceptor implements HandlerInterceptor {
 
     /**
      * jwt token
@@ -35,17 +31,21 @@ public class RequestFilter implements Filter {
     private String jwtSecret;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
 
-        String uri = httpServletRequest.getRequestURI();
+        String uri = request.getRequestURI();
         // 此处可转化为db 或redis查询
-        if (Constant.LOGIN.equals(uri)) {
-            chain.doFilter(request, response);
+        if (Constant.LOGIN.equals(uri) || !uri.startsWith(Constant.API)) {
+            return true;
         }
         else {
-            Cookie[] cookies = httpServletRequest.getCookies();
+            Cookie[] cookies = request.getCookies();
             Cookie ssoToken = null;
+            if (cookies == null) {
+                log.info("ssoToken is null");
+                throw new SsoException("999999","please login");
+            }
             for (Cookie cookie : cookies) {
                 String name = cookie.getName();
                 if (Constant.SSO_COOKIE_NAME.equals(name)) {
@@ -72,7 +72,7 @@ public class RequestFilter implements Filter {
                     // 判断缓存中是否存在userId
                     UserInfoCache userInfoCache = UserInfoCache.getInstance();
                     if (userInfoCache.ifExist(userId)) {
-                        chain.doFilter(request, response);
+                        return true;
                     }
                     else {
                         log.info("ssoToken error ");
@@ -84,7 +84,5 @@ public class RequestFilter implements Filter {
                 }
             }
         }
-
     }
-
 }

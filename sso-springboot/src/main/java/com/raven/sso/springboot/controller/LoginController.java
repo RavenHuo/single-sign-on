@@ -50,7 +50,7 @@ public class LoginController {
         return ResponseEntity.ok("登录成功");
     }
 
-    @GetMapping("/sso")
+    @GetMapping(Constant.SSO)
     public ResponseEntity<String> sso() {
         log.info("sso login success");
         return ResponseEntity.ok("sso login success");

@@ -7,10 +7,15 @@ package com.raven.sso.springboot.common;
  */
 public class Constant {
 
+
+
+    public static final String API = "/api";
     /**
      * 登录api
      */
-    public static final String LOGIN = "/login";
+    public static final String LOGIN = API + "/login";
+
+    public static final String SSO = API + "/sso";
 
     /**
      * token map中的key
