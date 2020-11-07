@@ -1,9 +1,10 @@
-package com.raven.sso.springboot.controller;
+package com.raven.sso.zuul.controller;
 
-import com.raven.sso.springboot.common.Constant;
-import com.raven.sso.springboot.common.UserInfo;
-import com.raven.sso.springboot.common.UserInfoCache;
-import com.raven.sso.springboot.common.utils.JwtUtil;
+import com.raven.sso.zuul.common.Constant;
+import com.raven.sso.zuul.common.ResponseResult;
+import com.raven.sso.zuul.common.UserInfo;
+import com.raven.sso.zuul.common.UserInfoCache;
+import com.raven.sso.zuul.common.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -48,12 +49,9 @@ public class LoginController {
         cookie.setMaxAge(3600*24);
         response.addCookie(cookie);
 
-        return ResponseEntity.ok("login success");
+
+        ResponseEntity<String> responseEntity = ResponseEntity.ok("login success");
+        return responseEntity;
     }
 
-    @GetMapping(Constant.SSO)
-    public ResponseEntity<String> sso() {
-        log.info("sso login success");
-        return ResponseEntity.ok("sso hello");
-    }
 }
