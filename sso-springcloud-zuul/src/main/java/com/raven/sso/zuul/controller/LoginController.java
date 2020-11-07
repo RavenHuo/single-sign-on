@@ -47,6 +47,7 @@ public class LoginController {
         userInfoCache.put(userId, userInfo);
         Cookie cookie = new Cookie(Constant.SSO_COOKIE_NAME,jwtToken);
         cookie.setMaxAge(3600*24);
+        cookie.setPath("/");
         response.addCookie(cookie);
 
 
